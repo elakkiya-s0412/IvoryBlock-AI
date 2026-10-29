@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IvoryBlock · Admin console</title>
+<style>
+:root{--bg:#f5f2ea;--paper:#fff;--ink:#16231d;--mut:#66766d;--line:#e4e0d3;--g:#1b8a5a;--g2:#0f6a43;--gl:#e3f3ea;--o:#e2682a;--r:#d23b4b;--rl:#fde3e6;--a:#d98a12;--al:#fdf0d4;--sh:0 1px 2px rgba(22,35,29,.06),0 8px 24px rgba(22,35,29,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.5;min-height:100vh}
+button{font:inherit;cursor:pointer}a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.app{display:flex;min-height:100vh}
+.side{width:244px;flex:none;background:#12201a;color:#fff;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow-y:auto;z-index:40}
+.logo{font-family:Georgia,serif;font-size:22px;font-weight:700;padding:20px 20px 4px}.logo b{color:#5fd19b}
+.logo-s{padding:0 20px 14px;font-size:12px;color:#8fa79b}
+.grp{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6f8a7c;padding:14px 20px 6px}
+.nav{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-left:3px solid transparent;color:#c3d3ca;padding:10px 20px;font-weight:600;font-size:14px;text-align:left}
+.nav:hover{color:#fff;background:#182a22}.nav.on{background:#1f3a2e;color:#fff;border-left-color:#5fd19b}
+.nav .bd{background:var(--r);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;margin-left:auto}
+.nav .ic{width:18px;text-align:center}
+.sidefoot{margin-top:auto;padding:16px 20px;border-top:1px solid #243a2f;font-size:13px;color:#a9bdb2;display:flex;flex-direction:column;gap:8px}
+.sidefoot .btn{background:#182a22;border-color:#2a4538;color:#fff}
+.content{flex:1;min-width:0}
+.mbar{display:none;background:#12201a;color:#fff;padding:10px 16px;align-items:center;gap:12px;position:sticky;top:0;z-index:30}
+.mbar button{background:none;border:0;color:#fff;font-size:24px}
+@media(max-width:860px){.side{position:fixed;left:-260px;transition:left .25s}.side.open{left:0}.mbar{display:flex}}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13.5px;color:var(--ink)}
+.btn:hover{border-color:var(--g)}.btn.pri{background:var(--g);border-color:var(--g);color:#fff}.btn.pri:hover{background:var(--g2)}
+.btn.dng{background:var(--r);border-color:var(--r);color:#fff}.btn.sm{padding:5px 10px;font-size:12.5px}.btn:disabled{opacity:.5;cursor:wait}
+main{padding:26px 0 60px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}canvas{width:100%;height:300px;display:block;border-radius:10px;background:#faf8f2;border:1px solid var(--line)}.gauge{font-family:Georgia,serif;font-size:44px;font-weight:700;line-height:1}.view{display:none}.view.on{display:block}
+h2{font-family:Georgia,serif;font-size:24px;margin-bottom:4px}h3{font-size:16px;margin-bottom:8px}
+.sub{color:var(--mut);font-size:14px;margin-bottom:18px}.small{font-size:12.5px;color:var(--mut)}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--sh)}
+.stat b{display:block;font-size:30px;font-family:Georgia,serif}.stat span{color:var(--mut);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}th{text-align:left;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}
+.tbl{overflow-x:auto}
+.tg{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.04em;white-space:nowrap;display:inline-block}
+.tg.published,.tg.GOOD,.tg.CLEAN,.tg.ok{background:var(--gl);color:var(--g2)}
+.tg.review,.tg.WATCH,.tg.SUSPICIOUS{background:var(--al);color:#9a6208}
+.tg.blocked,.tg.rejected,.tg.HIGH,.tg.CRITICAL,.tg.bad{background:var(--rl);color:#a42434}.tg.removed{background:#eee;color:#777}
+.bar{height:10px;border-radius:99px;background:#eee;overflow:hidden;margin:4px 0 10px}.bar i{display:block;height:100%;border-radius:99px}
+.item{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.item+.item{margin-top:12px}
+.sc{font-family:Georgia,serif;font-size:26px;font-weight:700}
+.heat{background:#faf8f2;border:1px solid var(--line);border-radius:10px;padding:14px;line-height:2;font-size:15px}
+.heat span{padding:1px 3px;border-radius:4px}.heat span[data-cat]{border-bottom:2px dotted var(--o)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:8px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px}
+.ov{position:fixed;inset:0;background:rgba(10,20,15,.55);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:30px 14px;z-index:50}
+.ov.on{display:flex}.modal{background:#fff;border-radius:16px;max-width:760px;width:100%;padding:24px;position:relative}
+.x{position:absolute;right:14px;top:12px;border:0;background:none;font-size:24px;color:var(--mut)}
+textarea,select,input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff}
+textarea{min-height:110px;resize:vertical}
+.chip{display:inline-block;background:#eef3ef;border-radius:7px;padding:2px 8px;font-size:12.5px;margin:2px 4px 2px 0}
+.chip.species{background:var(--rl)}.chip.payment{background:var(--al)}.chip.evasion{background:#e6e3fa}.chip.quantity{background:#dcefd9}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(30px);background:#12201a;color:#fff;padding:11px 20px;border-radius:10px;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.empty{text-align:center;color:var(--mut);padding:30px}
+.note{background:var(--al);border:1px solid #efd9a3;border-radius:10px;padding:10px 14px;font-size:13px;margin:10px 0}
+
+/* Shared midnight-glass console theme */
+:root{--bg:#050d0b;--paper:#0b1712;--ink:#e8f3ee;--mut:#85a094;--line:rgba(255,255,255,.10);--g:#3cf2a0;--g2:#18c982;--gl:rgba(60,242,160,.13);--o:#ffb547;--r:#ff4d5e;--rl:rgba(255,77,94,.13);--a:#ffb547;--al:rgba(255,181,71,.13);--sh:0 12px 32px rgba(0,0,0,.25)}
+body{background:radial-gradient(ellipse at 70% -10%,rgba(60,242,160,.07),transparent 42%),var(--bg);color:var(--ink)}
+.side{background:rgba(5,13,11,.94);border-right:1px solid var(--line);box-shadow:10px 0 35px rgba(0,0,0,.12);backdrop-filter:blur(18px)}
+.logo{font-family:"Segoe UI",system-ui,sans-serif;letter-spacing:.13em}.logo b{color:var(--g)}
+.logo-s,.grp{color:var(--mut)}
+.nav{color:#9db3a7;border-left-color:transparent}.nav:hover{background:rgba(255,255,255,.045);color:var(--ink)}.nav.on{background:rgba(60,242,160,.10);color:var(--ink);border-left-color:var(--g)}.nav.on .ic{color:var(--g)}
+.sidefoot{border-color:var(--line);color:var(--mut)}.sidefoot .btn{background:rgba(255,255,255,.045);border-color:var(--line);color:var(--ink)}
+.mbar{background:#07120d;border-bottom:1px solid var(--line)}
+.card{background:rgba(255,255,255,.04);border-color:var(--line);box-shadow:var(--sh);border-radius:16px}
+.card:hover{border-color:rgba(60,242,160,.25)}
+.btn{background:rgba(255,255,255,.045);border-color:var(--line);color:var(--ink);border-radius:10px}
+.btn:hover{border-color:var(--g)}.btn.pri{background:var(--g);border-color:var(--g);color:#04110b}.btn.pri:hover{background:#6ff8b9}.btn.dng{background:rgba(255,77,94,.15);border-color:rgba(255,77,94,.35);color:#ff7180}
+canvas{background:rgba(255,255,255,.025);border-color:var(--line)}
+.sub,.small{color:var(--mut)}
+table{color:var(--ink)}th{background:rgba(255,255,255,.05);color:#b3c8bd}td,th{border-color:var(--line)}tr:hover td{background:rgba(255,255,255,.025)}
+input,select,textarea{background:#0a1710!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:9px!important}
+input::placeholder,textarea::placeholder{color:#71877b!important}
+select option{background:#0b1712;color:var(--ink)}
+.modal{background:#0b1712;border:1px solid var(--line);color:var(--ink);box-shadow:0 25px 90px rgba(0,0,0,.6)}
+.toast{background:#10251a;color:var(--ink);border:1px solid var(--line)}
+.note,.item,.heat,.sc,.chip{background:rgba(255,255,255,.04);border-color:var(--line);color:var(--ink)}
+.published,.ok,.GOOD{color:var(--g)}.review,.WATCH{color:var(--o)}.blocked,.rejected,.CRITICAL,.SUSPICIOUS{color:#ff7180}
+@media(max-width:860px){.side{background:#050d0b;border-right:1px solid var(--line);box-shadow:20px 0 60px rgba(0,0,0,.4)}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side" id="side">
+  <div class="logo">Ivory<b>Block</b></div><div class="logo-s">Admin console · logged in as <span id="who"></span></div>
+  <div id="navs"></div>
+  <div class="sidefoot"><a class="btn sm" href="/">← Open marketplace</a><button class="btn sm" id="out">Log out</button></div>
+</aside>
+<div class="content">
+<div class="mbar"><button id="burger">☰</button><b>IvoryBlock admin</b></div>
+<main><div class="wrap">
+ <section class="view" id="v-over"></section><section class="view" id="v-queue"></section>
+ <section class="view" id="v-list"></section><section class="view" id="v-sellers"></section>
+ <section class="view" id="v-analyze"></section><section class="view" id="v-batch"></section>
+ <section class="view" id="v-model"></section><section class="view" id="v-data"></section>
+ <section class="view" id="v-cases"></section>
+</div></main></div></div>
+
+<div class="ov" id="ov"><div class="modal"><button class="x" id="ovx">×</button><div id="ovb"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(p,b){const o=b!==undefined?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:{};
+  const r=await fetch(p,o);let j={};try{j=await r.json()}catch(e){}
+  if(r.status===401||r.status===403){location.href='/';throw new Error('login')}
+  if(!r.ok&&!j.error)j.error='Error '+r.status;return j}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3200)}
+const inr=n=>'₹'+Number(n).toLocaleString('en-IN');
+const tag=(c,t)=>'<span class="tg '+esc(c)+'">'+esc(t||c).toUpperCase()+'</span>';
+const NAV=[['MARKETPLACE'],['over','📊','Overview'],['queue','🛡️','Review queue'],['list','📦','All listings'],['sellers','👤','Sellers & risk'],
+ ['AI TOOLS'],['analyze','🔍','Analyzer'],['batch','🧪','Batch scan'],['model','📈','Model lab'],['data','🗂️','Dataset & training'],
+ ['RECORDS'],['cases','📁','Case files']];
+let CUR='over',ST=null,LASTRES=null;
+function openM(h){$('#ovb').innerHTML=h;$('#ov').classList.add('on')}
+function closeM(){$('#ov').classList.remove('on')}
+$('#ovx').onclick=closeM;$('#ov').onmousedown=e=>{if(e.target.id==='ov')closeM()};
+addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+
+function heatHtml(heat){
+  return heat.map(h=>{let st='';const w=h.w;
+    if(w>0.5)st='background:rgba(210,59,75,'+Math.min(.85,.12+w/5).toFixed(2)+');color:#4a0a12';
+    else if(w<-0.5)st='background:rgba(27,138,90,'+Math.min(.7,.1+(-w)/5).toFixed(2)+')';
+    return '<span style="'+st+'"'+(h.cat?' data-cat="'+esc(h.cat)+'"':'')+' title="weight '+w+(h.cat?' · '+esc(h.cat):'')+'">'+esc(h.t)+'</span>'}).join(' ');
+}
+const LEGEND='<div class="legend"><span><i style="background:rgba(210,59,75,.6)"></i>pushes towards illicit</span><span><i style="background:rgba(27,138,90,.5)"></i>pushes towards legit</span><span><i style="background:#fff;border-bottom:2px dotted var(--o);border-radius:0"></i>evidence term (species / payment / evasion / quantity)</span></div>';
+const chips=ents=>ents.length?ents.map(e=>'<span class="chip '+esc(e.cat)+'">'+esc(e.cat)+': '+esc(e.text)+'</span>').join(''):'<span class="small">none found</span>';
+
+/* ---------- navigation ---------- */
+function renderNav(q){$('#navs').innerHTML=NAV.map(t=>t.length===1?'<div class="grp">'+t[0]+'</div>':
+  '<button class="nav'+(CUR===t[0]?' on':'')+'" data-t="'+t[0]+'"><span class="ic">'+t[1]+'</span>'+t[2]+(t[0]==='queue'&&q?'<span class="bd">'+q+'</span>':'')+'</button>').join('');
+  document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{go(b.dataset.t);$('#side').classList.remove('open')})}
+async function go(t){CUR=t;document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+t));
+  const ov=await api('/api/admin/overview');renderNav(ov.queue);scrollTo(0,0);
+  ({over:vOver,queue:vQueue,list:vList,sellers:vSellers,analyze:vAnalyze,batch:vBatch,model:vModel,data:vData,cases:vCases})[t](ov)}
+$('#burger').onclick=()=>$('#side').classList.toggle('open');
+
+/* ---------- overview ---------- */
+async function vOver(ov){
+  const an=await api('/api/analytics');const tot=Math.max(1,an.total);const L=an.levels;
+  const st=(n,l)=>'<div class="card stat"><b>'+n+'</b><span>'+l+'</span></div>';
+  const lb=(k,c)=>'<div class="small">'+k+' · '+L[k]+'</div><div class="bar"><i style="width:'+(100*L[k]/tot)+'%;background:'+c+'"></i></div>';
+  $('#v-over').innerHTML='<h2>Overview</h2><p class="sub">Every listing is screened by the AI at the moment it is posted.</p>'+
+   '<div class="grid g4">'+st(ov.published,'Published')+st(ov.review,'Under review')+st(ov.blocked,'Auto-blocked')+st(ov.rejected,'Rejected by admin')+st(ov.open_reports,'Open buyer reports')+st(ov.sellers,'Sellers')+st(ov.buyers,'Buyers')+st(ov.orders,'Demo orders')+'</div>'+
+   '<div class="grid g2" style="margin-top:14px"><div class="card"><h3>AI decisions so far ('+an.total+' scans)</h3>'+lb('CRITICAL','#d23b4b')+lb('SUSPICIOUS','#d98a12')+lb('CLEAN','#1b8a5a')+'</div>'+
+   '<div class="card"><h3>Most common evidence terms</h3>'+(an.terms.length?an.terms.map(t=>'<span class="chip">'+esc(t[0])+' ×'+t[1]+'</span>').join(''):'<span class="small">nothing yet</span>')+
+   '<div class="small" style="margin-top:12px">By type: '+Object.keys(an.cats).map(k=>esc(k)+' '+an.cats[k]).join(' · ')+'</div></div></div>'+
+   '<div class="card" style="margin-top:14px"><h3>Demo controls</h3><p class="small" style="margin-bottom:10px">Resets listings, orders, reports and demo accounts. The admin login and the learned feedback are kept.</p><button class="btn dng sm" id="rstMarket">Reset demo marketplace</button></div>';
+  $("#rstMarket").onclick=async()=>{if(!confirm('Reset all listings, orders, reports and demo users?'))return;await api('/api/admin/reset_market',{});toast('Marketplace reset.');go('over')}}
+
+/* ---------- queue + detail ---------- */
+function itemRow(l,showBtns){
+  return '<div class="card item"><div style="flex:1;min-width:240px"><div>'+tag(l.status)+' '+tag(l.level)+(l.open_reports?' <span class="tg bad">'+l.open_reports+' REPORT'+(l.open_reports>1?'S':'')+'</span>':'')+'</div>'+
+   '<h3 style="margin:8px 0 2px">'+esc(l.title)+'</h3><div class="small">by <b>'+esc(l.seller)+'</b> · seller risk '+l.seller_risk+' '+tag(l.seller_label)+' · '+inr(l.price)+' · '+esc(l.category)+'</div>'+
+   '<div class="small" style="margin-top:4px">'+esc(l.reason||'')+'</div></div>'+
+   '<div style="text-align:right"><div class="sc">'+l.score+'<span class="small">/100</span></div><div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end"><button class="btn sm" data-o="'+l.id+'">Evidence</button>'+
+   (showBtns?((l.level==='CRITICAL'?'':'<button class="btn pri sm" data-a="approve" data-id="'+l.id+'">Approve</button>')+'<button class="btn dng sm" data-a="reject" data-id="'+l.id+'">Reject</button>'):'')+'</div></div></div>'}
+function wire(root,after){root.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>detail(+b.dataset.o,after));
+  root.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>decide(+b.dataset.id,b.dataset.a,after))}
+async function decide(id,a,after){const r=await api('/api/admin/decide',{listing_id:id,action:a});
+  if(r.error){toast(r.error);return}closeM();
+  toast((a==='approve'?'Approved':'Rejected')+'. Model retrained on this decision ('+r.n_train+' training samples).');(after||(()=>go(CUR)))()}
+async function detail(id,after){const d=await api('/api/admin/listing?id='+id);if(d.error){toast(d.error);return}
+  const dt=d.detail||{};
+  openM('<h2>'+esc(d.title)+'</h2><div>'+tag(d.status)+' '+tag(d.level)+' <span class="small">by '+esc(d.seller)+' · '+inr(d.price)+' · '+esc(d.category)+'</span></div>'+
+   '<p style="margin:12px 0">'+esc(d.description)+'</p>'+
+   '<div class="grid g4" style="margin-bottom:10px"><div class="card stat"><b>'+d.score+'</b><span>Risk index</span></div><div class="card stat"><b>'+Math.round(d.nb)+'%</b><span>Naive Bayes</span></div><div class="card stat"><b>'+Math.round(d.lr)+'%</b><span>Logistic Regression</span></div><div class="card stat"><b>'+d.seller_risk+'</b><span>Seller risk '+esc(d.seller_label)+'</span></div></div>'+
+   '<h3>Why the AI decided this</h3>'+LEGEND+'<div class="heat">'+heatHtml(dt.heat||[])+'</div>'+
+   '<h3 style="margin-top:14px">Evidence found</h3>'+chips(d.entities||[])+
+   '<div class="small" style="margin-top:8px">'+esc(d.reason||'')+'</div>'+
+   (dt.locations&&dt.locations.length?'<div class="small" style="margin-top:6px">Places mentioned: '+dt.locations.map(l=>esc(l.name)).join(', ')+'</div>':'')+
+   '<h3 style="margin-top:14px">Strongest words/phrases</h3>'+((dt.drivers||[]).map(x=>'<span class="chip" style="background:'+(x.weight>0?'var(--rl)':'var(--gl)')+'">'+esc(x.token)+' '+(x.weight>0?'+':'')+x.weight+'</span>').join('')||'<span class="small">none</span>')+
+   '<h3 style="margin-top:14px">Buyer reports</h3>'+((d.reports||[]).length?d.reports.map(r=>'<div class="card" style="padding:12px;margin:8px 0"><div class="small"><b>'+esc(r.username)+'</b> reported: “'+esc(r.reason)+'” · '+esc(r.status)+'</div>'+(r.admin_response?'<p class="small" style="margin:6px 0">Previous response: '+esc(r.admin_response)+'</p>':'')+'<label class="small" style="display:block;margin-top:8px">Response to buyer<textarea class="f" id="resp-'+r.id+'" maxlength="1000" placeholder="Explain the decision to the buyer">'+esc(r.admin_response||'')+'</textarea></label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><select class="f" id="outcome-'+r.id+'" style="max-width:190px"><option value="dismissed" '+(r.status==='dismissed'?'selected':'')+'>Listing retained</option><option value="upheld" '+(r.status==='upheld'?'selected':'')+'>Violation confirmed</option></select><button class="btn pri sm" data-report-save="'+r.id+'">Send response</button></div></div>').join(''):'<span class="small">none</span>')+
+   (d.status!=='removed'?'<div style="display:flex;gap:8px;margin-top:18px">'+(d.level==='CRITICAL'?'':'<button class="btn pri" id="dA">Approve (publish)</button>')+'<button class="btn dng" id="dR">Reject (violation)</button></div><div class="small" style="margin-top:6px">Your decision is added to the training data and the model retrains immediately.</div>':'<div class="note">The seller removed this listing.</div>'));
+  if(d.status!=='removed'){if($('#dA'))$('#dA').onclick=()=>decide(id,'approve',after);$('#dR').onclick=()=>decide(id,'reject',after)}
+  document.querySelectorAll('[data-report-save]').forEach(b=>b.onclick=async()=>{const rid=+b.dataset.reportSave;const response=$('#resp-'+rid).value.trim();const outcome=$('#outcome-'+rid).value;const r=await api('/api/admin/report_response',{report_id:rid,response,outcome});if(r.error){toast(r.error);return}toast('Buyer response saved.');detail(id,after)})} 
+async function vQueue(){const rows=await api('/api/admin/queue');const el=$('#v-queue');
+  el.innerHTML='<h2>Review queue</h2><p class="sub">Suspicious listings and buyer-reported listings wait here. Suspicious ones are hidden from buyers until you approve them.</p>'+(rows.length?rows.map(l=>itemRow(l,true)).join(''):'<div class="card empty">🎉 Nothing to review.</div>');wire(el)}
+
+/* ---------- all listings ---------- */
+async function vList(){const el=$('#v-list');
+  el.innerHTML='<h2>All listings</h2><p class="sub">Includes blocked and rejected listings, kept as cases.</p><div style="max-width:220px;margin-bottom:12px"><select id="fs"><option value="">All statuses</option><option>published</option><option>review</option><option>blocked</option><option>rejected</option><option>removed</option></select></div><div id="lr"></div>';
+  const load=async()=>{const rows=await api('/api/admin/listings'+($('#fs').value?'?status='+$('#fs').value:''));
+    $('#lr').innerHTML=rows.length?rows.map(l=>itemRow(l,false)).join(''):'<div class="card empty">No listings.</div>';wire($('#lr'),()=>go('list'))};
+  $('#fs').onchange=load;load()}
+
+/* ---------- sellers ---------- */
+async function vSellers(){const rows=await api('/api/admin/sellers');const el=$('#v-sellers');
+  el.innerHTML='<h2>Sellers and risk scores</h2><p class="sub">Risk grows with blocked, flagged and rejected listings and upheld reports. Higher risk lowers the thresholds, so repeat offenders are caught faster. Admin-approved listings do not count against a seller.</p>'+
+   '<div class="card tbl"><table><tr><th>Seller</th><th>Risk</th><th>Standing</th><th>Total</th><th>Live</th><th>Review</th><th>Blocked</th><th>Rejected</th><th>Account</th></tr>'+
+   rows.map(s=>'<tr><td><b>'+esc(s.username)+'</b></td><td><b>'+s.risk+'</b><div class="bar" style="width:80px"><i style="width:'+s.risk+'%;background:'+(s.risk>=60?'#d23b4b':s.risk>=25?'#d98a12':'#1b8a5a')+'"></i></div></td><td>'+tag(s.label)+'</td><td>'+s.total+'</td><td>'+s.published+'</td><td>'+s.review+'</td><td>'+s.blocked+'</td><td>'+s.rejected+'</td>'+
+   '<td><button class="btn sm" data-u="'+s.id+'" data-on="'+(s.active?1:0)+'">'+(s.active?'Suspend':'Reinstate')+'</button></td></tr>').join('')+'</table></div>';
+  el.querySelectorAll('[data-u]').forEach(b=>b.onclick=async()=>{await api('/api/admin/seller_active',{user_id:+b.dataset.u,active:b.dataset.on==='1'?0:1});toast(b.dataset.on==='1'?'Seller suspended. Their listings are hidden.':'Seller reinstated.');vSellers()})}
+
+/* ---------- shared bits ---------- */
+const pct=(v,c)=>'<div style="display:flex;align-items:center;gap:6px"><div class="bar" style="width:70px;margin:0"><i style="width:'+v+'%;background:'+c+'"></i></div><b>'+v+'%</b></div>';
+const head=(t,s)=>'<h2>'+t+'</h2><p class="sub">'+s+'</p>';
+async function getState(){ST=await api('/api/state');return ST}
+
+/* ---------- Analyzer (+ verdict, teach the model, brief, route trace) ---------- */
+async function vAnalyze(){const st=await getState();const el=$('#v-analyze');
+  el.innerHTML=head('Analyzer','Paste any listing text. The AI scores it, explains why, and you can teach it when it is wrong.')+
+  '<div class="card"><h3>1 · Intercepted listing</h3><textarea id="an" placeholder="Paste a listing here… (Ctrl+Enter to analyze)"></textarea>'+
+   '<div class="row" style="margin-top:10px"><button class="btn pri" id="anb">Analyze ▸</button><button class="btn" id="anc">Clear</button>'+
+   '<select id="smp" style="width:auto;max-width:100%"><option value="">Load a sample…</option>'+st.samples.map(x=>'<option value="'+x.id+'">'+x.id+'. '+esc(x.title)+'</option>').join('')+'</select></div></div>'+
+  '<div class="card" style="margin-top:14px" id="verdict"><h3>2 · Verdict &amp; explanation</h3><div class="empty">Awaiting a listing… load a sample and press Analyze.</div></div>'+
+  '<div class="card" style="margin-top:14px"><h3>3 · Trade-route trace</h3><canvas id="map"></canvas><div class="small" id="mapNote" style="margin-top:8px">Places mentioned in the text are plotted and linked in order of mention.</div></div>';
+  const smap={};st.samples.forEach(x=>smap[x.id]=x);
+  $('#smp').onchange=e=>{if(e.target.value)$('#an').value=smap[e.target.value].text};
+  $('#anc').onclick=()=>{$('#an').value='';$('#an').focus()};
+  $('#anb').onclick=runAnalyze;$('#an').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')runAnalyze()});
+  fitMap();setRoute([],'CLEAN');if(LASTRES){$('#an').value=LASTRES.text;showResult(LASTRES)}}
+async function runAnalyze(){const t=$('#an').value.trim();if(!t){toast('Paste or pick a listing first.');return}
+  $('#anb').disabled=true;const r=await api('/api/analyze',{text:t,save:true});$('#anb').disabled=false;
+  if(r.error){toast(r.error);return}LASTRES=r;showResult(r)}
+function showResult(r){
+  $('#verdict').innerHTML='<h3>2 · Verdict &amp; explanation</h3><div class="row" style="gap:18px;margin-bottom:8px"><div class="gauge">'+r.score+'<span class="small">/100</span></div><div>'+tag(r.level)+'<div class="small" style="margin-top:4px">Naive Bayes '+r.nb+'% · Logistic Regression '+r.lr+'% · evidence rules '+r.evidence+'% · '+r.ms+' ms</div></div></div>'+
+   LEGEND+'<div class="heat">'+heatHtml(r.heat)+'</div><div style="margin-top:10px">'+chips(r.entities)+'</div>'+
+   '<div style="margin-top:8px">'+(r.drivers||[]).map(x=>'<span class="chip" style="background:'+(x.weight>0?'var(--rl)':'var(--gl)')+'">'+esc(x.token)+' '+(x.weight>0?'+':'')+x.weight+'</span>').join('')+'</div>'+
+   '<div class="row" style="margin-top:14px"><button class="btn dng sm" id="fbI">Mark illicit</button><button class="btn pri sm" id="fbL">Mark legitimate</button><a class="btn sm" href="/api/report?id='+r.id+'">⬇ Download brief</a></div>'+
+   '<div class="small" style="margin-top:6px">“Mark” teaches the model with this listing and retrains it straight away.</div>';
+  $('#fbI').onclick=()=>teach(1);$('#fbL').onclick=()=>teach(0);setRoute(r.locations||[],r.level)}
+async function teach(label){const t=LASTRES&&LASTRES.text;if(!t)return;const r=await api('/api/feedback',{text:t,label});
+  if(r.error){toast(r.error);return}toast('Model retrained with your correction ('+r.n_train+' samples). Re-analyzing…');
+  const n=await api('/api/analyze',{text:t,save:true});LASTRES=n;showResult(n)}
+
+/* route map (canvas) */
+let ROUTE={pts:[],lvl:'CLEAN',t0:0};
+function fitMap(){const m=$('#map');if(!m)return;const d=devicePixelRatio||1,w=m.clientWidth,h=m.clientHeight;m.width=w*d;m.height=h*d;m.getContext('2d').setTransform(d,0,0,d,0,0)}
+function proj(lat,lon,w,h){return[(lon+20)/180*w,(55-lat)/100*h]}
+function drawMap(ts){requestAnimationFrame(drawMap);const m=$('#map');if(!m||CUR!=='analyze')return;const w=m.clientWidth,h=m.clientHeight;if(!w)return;
+  if(m.width!==Math.round(w*(devicePixelRatio||1)))fitMap();const x=m.getContext('2d');x.clearRect(0,0,w,h);
+  x.lineWidth=1;x.font='10px Consolas,monospace';x.fillStyle='rgba(102,118,109,.7)';x.strokeStyle='rgba(22,35,29,.08)';
+  for(let lo=-20;lo<=160;lo+=20){const X=(lo+20)/180*w;x.beginPath();x.moveTo(X,0);x.lineTo(X,h);x.stroke();x.fillText(lo+'°',X+3,h-5)}
+  for(let la=-40;la<=50;la+=15){const Y=(55-la)/100*h;x.beginPath();x.moveTo(0,Y);x.lineTo(w,Y);x.stroke();x.fillText(la+'°',4,Y-3)}
+  const col={CRITICAL:'210,59,75',SUSPICIOUS:'217,138,18',CLEAN:'27,138,90'}[ROUTE.lvl]||'27,138,90';
+  if(!ROUTE.pts.length){x.fillStyle='rgba(102,118,109,.9)';x.font='13px Segoe UI';x.textAlign='center';x.fillText('No places detected in the text',w/2,h/2);x.textAlign='left';return}
+  const k=Math.min(1,(ts-ROUTE.t0)/1100),pts=ROUTE.pts.map(p=>proj(p.lat,p.lon,w,h));x.globalAlpha=k;
+  for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],cx=(a[0]+b[0])/2,cy=Math.min(a[1],b[1])-50-Math.abs(a[0]-b[0])*.12;
+    x.strokeStyle='rgba('+col+',.65)';x.setLineDash([6,6]);x.lineDashOffset=-ts/60;x.beginPath();x.moveTo(a[0],a[1]);x.quadraticCurveTo(cx,cy,b[0],b[1]);x.stroke();x.setLineDash([]);
+    const t=((ts/1600)+i*.33)%1,u=1-t;x.fillStyle='rgb('+col+')';x.beginPath();x.arc(u*u*a[0]+2*u*t*cx+t*t*b[0],u*u*a[1]+2*u*t*cy+t*t*b[1],3.6,0,6.3);x.fill()}
+  pts.forEach((p,i)=>{const r=((ts/700)+i*.4)%1*18;x.strokeStyle='rgba('+col+','+(1-r/18)*.8+')';x.beginPath();x.arc(p[0],p[1],4+r,0,6.3);x.stroke();
+    x.fillStyle='rgb('+col+')';x.beginPath();x.arc(p[0],p[1],5,0,6.3);x.fill();x.fillStyle='#16231d';x.font='12px Segoe UI';x.fillText((i+1)+'. '+ROUTE.pts[i].name,p[0]+10,p[1]-8)});x.globalAlpha=1}
+function setRoute(locs,lvl){ROUTE={pts:locs,lvl:lvl,t0:performance.now()};const n=$('#mapNote');if(!n)return;
+  n.textContent=locs.length?(locs.length>1?'Route: '+locs.map(l=>l.name).join(' → ')+(lvl==='CLEAN'?'  (listing judged legitimate)':'  — corridor flagged for investigation'):'Single place mentioned: '+locs[0].name):'Places mentioned in the text are plotted and linked in order of mention.'}
+addEventListener('resize',fitMap);requestAnimationFrame(drawMap);
+
+/* ---------- Batch scan ---------- */
+async function vBatch(){const st=await getState();const el=$('#v-batch');
+  el.innerHTML=head('Batch scan','Runs every built-in sample and trap case through the AI at once and checks it against the expected answer.')+
+  '<div class="row" style="margin-bottom:12px"><button class="btn pri" id="bgo">Scan all '+st.samples.length+' samples ▸</button><span class="small">Each scan is saved as a case with source “batch”.</span></div><div id="bres"></div>'}
+async function runBatch(){const S=ST.samples;$('#bgo').disabled=true;toast('Scanning '+S.length+' samples…');
+  const res=await api('/api/batch',{texts:S.map(x=>x.text)});$('#bgo').disabled=false;if(res.error){toast(res.error);return}
+  let ok=0;const rows=res.map((r,i)=>{const got=r.level==='CLEAN'?'legit':'illicit',good=got===S[i].expect;if(good)ok++;
+    return '<tr><td><b>'+S[i].id+'</b> '+esc(S[i].title)+(S[i].hard?' <span class="small">(hard)</span>':'')+'</td><td>'+S[i].expect+'</td><td><b>'+r.score+'</b></td><td>'+tag(r.level)+'</td><td>'+tag(good?'ok':'bad',good?'✔ correct':'✖ wrong')+'</td></tr>'});
+  $('#bres').innerHTML='<div class="card"><h3>'+ok+' / '+res.length+' classified correctly</h3><div class="tbl"><table><tr><th>Sample</th><th>Expected</th><th>Risk</th><th>Verdict</th><th>Result</th></tr>'+rows.join('')+'</table></div></div>'}
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='bgo')runBatch()});
+
+/* ---------- Model lab ---------- */
+async function vModel(){const el=$('#v-model');el.innerHTML=head('Model lab','How well the AI works, and where it fails.')+'<div class="card empty">Loading…</div>';
+  const [st,ce,tr]=await Promise.all([getState(),api('/api/admin/coded_eval'),api('/api/admin/trap_eval')]);
+  const tierRow=t=>'<tr><td><b>'+t.tier+'</b></td><td>'+esc(t.desc)+'<div class="small">'+t.n+' listings · '+(t.label?'should be flagged':'should NOT be flagged')+'</div></td><td>'+pct(t.keyword,'#8a8a80')+'</td><td>'+pct(t.mlraw,'#d98a12')+'</td><td>'+pct(t.ml,'#1b8a5a')+'</td><td>'+pct(t.hybrid,'#0f6a43')+'</td></tr>';
+  el.innerHTML=head('Model lab','How well the AI works, and where it fails.')+
+  '<div class="card"><h3>1 · Model comparison</h3><div class="small" style="margin-bottom:8px">Trained on '+st.n_train+' samples ('+st.n_extra+' from admin feedback), tested on '+st.n_test+' held-out samples.</div><div class="tbl"><table><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>False +</th><th>False −</th><th>ms/listing</th></tr>'+
+   st.metrics.map(m=>'<tr><td><b>'+esc(m.model)+'</b></td><td>'+m.accuracy+'%</td><td>'+m.precision+'%</td><td>'+m.recall+'%</td><td>'+m.f1+'%</td><td>'+m.fp+'</td><td>'+m.fn+'</td><td>'+m.latency_ms+'</td></tr>').join('')+'</table></div>'+
+   '<div class="note">Honest note: the built-in data is synthetic and template-based, so scores near 100% are expected and do not prove real-world accuracy. Use the two tests below, and load a real dataset, for a fair view.</div></div>'+
+  '<div class="card" style="margin-top:14px"><h3>2 · Coded-language evaluation (share of listings flagged)</h3><div class="small" style="margin-bottom:8px">These coded terms (e.g. “hard white rods”) never appear in the training data. Tier D should be 0% (false alarms).</div><div class="tbl"><table><tr><th>Tier</th><th>Test</th><th>Keyword search</th><th>ML (no leetspeak fix)</th><th>ML</th><th>Full system</th></tr>'+ce.tiers.map(tierRow).join('')+'</table></div>'+
+   (ce.misses.length?'<details style="margin-top:10px"><summary class="small" style="cursor:pointer">Illicit listings the system missed ('+ce.misses.length+' shown)</summary>'+ce.misses.map(m=>'<div class="small" style="margin-top:4px">['+m.tier+'] score '+m.score+': '+esc(m.text)+'</div>').join('')+'</details>':'')+
+   '<div class="small" style="margin-top:8px">Coded terms used: '+ce.terms.map(esc).join(', ')+'</div></div>'+
+  '<div class="card" style="margin-top:14px"><h3>3 · Trap-case test ('+tr.hybrid_correct+'/'+tr.n+' correct · keyword baseline '+tr.keyword_correct+'/'+tr.n+')</h3><div class="small" style="margin-bottom:8px">Innocent listings that use risky words (ivory dress, Tiger Balm, pangolin donation) and illicit ones with no species word.</div><div class="tbl"><table><tr><th>#</th><th>Case</th><th>Should be</th><th>Score</th><th>System</th><th>Keyword</th></tr>'+
+   tr.rows.map(r=>'<tr><td>'+r.id+'</td><td>'+esc(r.title)+(r.hard?' <span class="small">(hard)</span>':'')+'</td><td>'+esc(r.expect)+'</td><td>'+r.score+' '+tag(r.level)+'</td><td>'+tag(r.hybrid_ok?'ok':'bad',r.hybrid_ok?'pass':'fail')+'</td><td>'+tag(r.keyword_ok?'ok':'bad',r.keyword_ok?'pass':'fail')+'</td></tr>').join('')+'</table></div></div>'}
+
+/* ---------- Dataset & training ---------- */
+let CSVTEXT='';
+async function vData(){const el=$('#v-data');const [st,ds]=await Promise.all([getState(),api('/api/admin/datasets')]);CSVTEXT='';
+  el.innerHTML=head('Dataset &amp; training','Bring your own data. The models retrain and are re-tested instantly.')+
+  '<div class="card"><h3>Current training data</h3><div class="small">'+st.n_train+' training samples · '+st.n_test+' test samples · '+st.n_extra+' from admin decisions and corrections · '+(st.n_imported?st.n_imported+' imported rows ('+(st.only?'used alone':'added to built-in data')+')':'built-in data only')+'</div></div>'+
+  '<div class="card" style="margin-top:14px"><h3>Import a CSV from your computer</h3><div class="row"><input type="file" id="csvFile" accept=".csv,text/csv" style="display:none"><button class="btn" id="pick">📂 Choose CSV file</button><span class="small" id="fname">no file chosen</span></div>'+
+   '<label class="small" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="only"> Use only my data (ignore the built-in synthetic dataset)</label>'+
+   '<div class="row" style="margin-top:10px"><button class="btn pri" id="imp" disabled>Import &amp; retrain</button><button class="btn" id="rst">Remove imported data</button></div>'+
+   '<div class="small" style="margin-top:8px">Format: header row <b>text,label</b>, then one listing per row. Label <b>1</b> (or “illicit”) = trafficking, <b>0</b> (or “legit”) = normal.</div></div>'+
+  '<div class="card" style="margin-top:14px"><h3>Dataset files next to app.py</h3>'+(ds.length?ds.map(d=>'<label style="display:block;font-size:14px"><input type="checkbox" class="dsf" value="'+esc(d.name)+'" checked> '+esc(d.name)+' <span class="small">('+d.rows+' rows)</span></label>').join('')+
+   '<label class="small" style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="dso"> Use ONLY these files</label><div class="row" style="margin-top:10px"><button class="btn pri sm" id="dsl">Load &amp; retrain</button></div>':'<span class="small">No dataset*.csv files found next to app.py.</span>')+'</div>';
+  $('#pick').onclick=()=>$('#csvFile').click();
+  $('#csvFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{CSVTEXT=r.result;$('#fname').textContent=f.name+' ('+Math.round(f.size/1024)+' KB)';$('#imp').disabled=false};r.readAsText(f)};
+  $('#imp').onclick=async()=>{$('#imp').disabled=true;toast('Importing and retraining…');const r=await api('/api/import',{csv:CSVTEXT,only:$('#only').checked});
+    if(r.error){toast(r.error);$('#imp').disabled=false;return}toast('Imported '+r.added+' rows ('+r.skipped+' skipped). Retrained on '+r.n_train+' samples.');vData()};
+  $('#rst').onclick=async()=>{await api('/api/reset_import',{});toast('Imported data removed. Back to built-in data.');vData()};
+  if(ds.length)$('#dsl').onclick=async()=>{const f=[...document.querySelectorAll('.dsf:checked')].map(x=>x.value);if(!f.length){toast('Select a file.');return}
+    $('#dsl').disabled=true;const r=await api('/api/admin/load_datasets',{files:f,only:$('#dso').checked});$('#dsl').disabled=false;
+    if(r.error){toast(r.error);return}toast('Loaded '+r.added+' rows. Retrained on '+r.n_train+' samples.');vData()}}
+
+/* ---------- cases ---------- */
+async function vCases(){const st=await getState();const el=$('#v-cases');
+  el.innerHTML=head('Case files','Every scan is logged: '+st.stats.total+' total, '+st.stats.flagged+' flagged, '+st.stats.critical+' critical.')+'<p style="margin-bottom:12px"><a class="btn pri sm" href="/api/export">Download all cases (CSV)</a></p>'+
+   '<div class="card tbl"><table><tr><th>ID</th><th>Time</th><th>Source</th><th>Score</th><th>Level</th><th>Text</th><th></th></tr>'+
+   st.history.map(h=>'<tr><td>#'+h.id+'</td><td class="small">'+esc(h.ts)+'</td><td>'+esc(h.source)+'</td><td><b>'+h.score+'</b></td><td>'+tag(h.level)+'</td><td>'+esc(h.text.slice(0,110))+(h.text.length>110?'…':'')+'</td><td><a class="btn sm" href="/api/report?id='+h.id+'">Brief</a></td></tr>').join('')+'</table></div><div class="small" style="margin-top:6px">Showing the latest 15; the CSV has all of them.</div>'}
+
+$('#out').onclick=async()=>{await api('/api/logout',{});location.href='/'};
+(async()=>{const me=await fetch('/api/me').then(r=>r.json());
+  if(!me.user||me.user.role!=='admin'){location.href='/';return}
+  $('#who').textContent=me.user.username;go('over')})();
+</script>
+</body>
+</html>

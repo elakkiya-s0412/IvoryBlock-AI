@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GreenBazaar · A marketplace screened by IvoryBlock AI</title>
+<style>
+:root{
+  --bg:#f5f2ea; --paper:#ffffff; --ink:#16231d; --mut:#66766d; --line:#e4e0d3;
+  --g:#1b8a5a; --g2:#0f6a43; --gl:#e3f3ea; --o:#e2682a; --r:#d23b4b; --a:#d98a12;
+  --sh:0 1px 2px rgba(22,35,29,.06),0 8px 24px rgba(22,35,29,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh;line-height:1.5}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:30;background:rgba(245,242,234,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:66px}
+.logo{display:flex;align-items:center;gap:10px;font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:700;letter-spacing:-.01em}
+.logo svg{width:32px;height:32px}
+.logo b{color:var(--g)}
+.search{flex:1;max-width:520px;position:relative}
+.search input{width:100%;padding:11px 16px 11px 42px;border-radius:99px;border:1px solid var(--line);background:#fff;font:inherit;outline:none;transition:box-shadow .25s,border-color .25s}
+.search input:focus{border-color:var(--g);box-shadow:0 0 0 4px rgba(27,138,90,.14)}
+.search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mut);fill:none;stroke-width:2}
+.navr{margin-left:auto;display:flex;align-items:center;gap:8px}
+.lnk{padding:9px 14px;border-radius:99px;font-size:14px;font-weight:600;color:var(--ink);background:transparent;border:none;transition:background .2s}
+.lnk:hover,.lnk.on{background:rgba(27,138,90,.1);color:var(--g2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:99px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:14px;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--sh)}
+.btn.pri{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.pri:hover{background:var(--g2)}
+.btn.dng{color:var(--r);border-color:rgba(210,59,75,.35)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.sm{padding:7px 14px;font-size:13px}
+.me{display:flex;align-items:center;gap:9px;padding:5px 6px 5px 14px;border:1px solid var(--line);border-radius:99px;background:#fff;font-size:13.5px;font-weight:600}
+.role{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--gl);color:var(--g2)}
+.role.admin{background:#ffe8d9;color:#b4501c}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;margin:26px 0 8px;border-radius:28px;background:linear-gradient(135deg,#0f3d2a 0%,#146a45 55%,#1f8a5a 100%);color:#fff;padding:46px 44px}
+.hero h1{font-family:Georgia,serif;font-size:clamp(28px,4vw,46px);line-height:1.12;max-width:640px;letter-spacing:-.02em}
+.hero p{margin-top:14px;max-width:560px;color:rgba(255,255,255,.82);font-size:16px}
+.shield{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:9px 16px;border-radius:99px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);font-size:13.5px;font-weight:600}
+.shield svg{width:18px;height:18px;stroke:#9cf0c6;fill:none;stroke-width:2}
+.leaf{position:absolute;opacity:.12;animation:float 9s ease-in-out infinite}
+.leaf.a{right:-30px;top:-40px;width:300px}.leaf.b{right:180px;bottom:-70px;width:180px;animation-delay:-4s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-16px) rotate(6deg)}}
+.hstats{display:flex;gap:34px;margin-top:28px;flex-wrap:wrap}
+.hstats b{display:block;font-size:30px;font-family:Georgia,serif}
+.hstats span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 18px}
+.cat{padding:8px 15px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:13.5px;font-weight:600;color:var(--mut);transition:all .2s}
+.cat:hover{color:var(--ink);transform:translateY(-2px)}
+.cat.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sec-t{display:flex;align-items:baseline;justify-content:space-between;margin:10px 0 14px}
+.sec-t h2{font-family:Georgia,serif;font-size:26px;letter-spacing:-.01em}
+.sec-t span{color:var(--mut);font-size:13.5px}
+
+/* ---------- grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;padding-bottom:50px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:var(--sh);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;animation:up .6s both}
+.card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(22,35,29,.16)}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.thumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:58px;position:relative;overflow:hidden}
+.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-120%);transition:transform .8s}
+.card:hover .thumb::after{transform:translateX(120%)}
+.thumb span{transition:transform .35s}.card:hover .thumb span{transform:scale(1.18) rotate(-6deg)}
+.cb{padding:14px 16px 16px}
+.cb .ct{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.cb h3{font-size:15.5px;margin:4px 0 8px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cb .row{display:flex;justify-content:space-between;align-items:center}
+.price{font-weight:800;font-size:18px;color:var(--o)}
+.seller{font-size:12.5px;color:var(--mut)}
+.skel{height:268px;border-radius:20px;background:linear-gradient(100deg,#ece8db 30%,#f6f3ea 50%,#ece8db 70%);background-size:300% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-300% 0}}
+.empty{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--mut)}
+
+/* ---------- modal ---------- */
+.ov{position:fixed;inset:0;z-index:60;background:rgba(14,26,20,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
+.ov.on{display:flex;animation:fade .25s both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--paper);border-radius:26px;width:100%;max-width:520px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:pop .4s cubic-bezier(.2,.9,.3,1.2) both;position:relative}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
+.modal .x{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1;z-index:2}
+.pm .thumb{height:190px;font-size:76px}
+.pm .body{padding:22px 26px 26px}
+.pm h2{font-family:Georgia,serif;font-size:24px;line-height:1.2}
+.pm p{color:#3b4a42;margin:12px 0 16px;white-space:pre-wrap;word-break:break-word}
+.pm .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.pm .acts{display:flex;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;background:var(--bg);margin:22px 26px 0;border-radius:99px;padding:4px}
+.tabs button{flex:1;border:none;background:transparent;padding:10px;border-radius:99px;font-weight:700;color:var(--mut);transition:all .25s}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:var(--sh)}
+.form{padding:20px 26px 26px;display:grid;gap:14px}
+.form label{font-size:12.5px;font-weight:700;color:var(--mut);letter-spacing:.04em;display:grid;gap:6px}
+input.f,textarea.f,select.f{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font:inherit;color:var(--ink);outline:none;transition:box-shadow .2s,border-color .2s}
+input.f:focus,textarea.f:focus,select.f:focus{border-color:var(--g);box-shadow:0 0 0 4px rgba(27,138,90,.14)}
+textarea.f{min-height:120px;resize:vertical}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.roles label{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;cursor:pointer;color:var(--ink);font-weight:600;font-size:14px;transition:all .2s}
+.roles input{accent-color:var(--g)}
+.roles label:has(input:checked){border-color:var(--g);background:var(--gl)}
+.err{color:var(--r);font-size:13px;min-height:18px}
+.demo{margin:0 26px 24px;padding:14px;border-radius:16px;background:var(--bg);font-size:12.5px;color:var(--mut)}
+.demo b{color:var(--ink)}
+.demo .dl{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.demo button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:600}
+.demo button:hover{border-color:var(--g)}
+
+/* ---------- seller / orders pages ---------- */
+.view{display:none}.view.on{display:block;animation:up .5s both}
+.page-t{margin:30px 0 16px}
+.page-t h1{font-family:Georgia,serif;font-size:32px;letter-spacing:-.01em}
+.page-t p{color:var(--mut);margin-top:4px}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--sh)}
+.panel h3{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.standing{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;font-size:13px;font-weight:700}
+.standing.GOOD{background:var(--gl);color:var(--g2)}.standing.WATCH{background:#fdf0d4;color:#9a6208}.standing.HIGH{background:#fde3e6;color:#a42434}
+.dotl{width:9px;height:9px;border-radius:50%;background:currentColor}
+.check{position:relative;min-height:260px;display:flex;flex-direction:column;justify-content:center}
+.check .idle{text-align:center;color:var(--mut)}
+.check .idle svg{width:64px;height:64px;stroke:var(--g);fill:none;stroke-width:1.5;margin-bottom:10px;opacity:.7}
+.steps{list-style:none;display:grid;gap:10px}
+.steps li{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--mut);transition:all .3s}
+.steps li::before{content:"";width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;transition:all .3s}
+.steps li.act{color:var(--ink);transform:translateX(6px)}
+.steps li.act::before{border-color:var(--a);border-top-color:transparent;animation:spin .7s linear infinite}
+.steps li.ok{color:var(--ink)}.steps li.ok::before{background:var(--g);border-color:var(--g);box-shadow:0 0 0 4px rgba(27,138,90,.15)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan{height:4px;border-radius:4px;margin:0 0 18px;background:linear-gradient(90deg,transparent,var(--g),transparent);background-size:50% 100%;background-repeat:no-repeat;animation:slide 1s linear infinite}
+@keyframes slide{from{background-position:-60% 0}to{background-position:160% 0}}
+.res{text-align:center;animation:pop .5s both}
+.res .ic{width:84px;height:84px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.res .ic svg{width:44px;height:44px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.res.published .ic{background:var(--g);box-shadow:0 0 0 10px rgba(27,138,90,.14)}
+.res.review .ic{background:var(--a);box-shadow:0 0 0 10px rgba(217,138,18,.16)}
+.res.blocked .ic{background:var(--r);box-shadow:0 0 0 10px rgba(210,59,75,.14)}
+.res h4{font-family:Georgia,serif;font-size:24px}
+.res p{color:var(--mut);margin-top:8px;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--mut);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;font-weight:700}
+td{padding:12px 10px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr{animation:up .5s both}
+.tg{padding:4px 11px;border-radius:99px;font-size:11.5px;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+.tg.published{background:var(--gl);color:var(--g2)}.tg.review{background:#fdf0d4;color:#9a6208}
+.tg.blocked,.tg.rejected{background:#fde3e6;color:#a42434}.tg.removed{background:#eee;color:#777}
+.small{font-size:12.5px;color:var(--mut)}
+.tbl-wrap{overflow:auto}
+.banner{padding:12px 16px;border-radius:14px;background:#fde3e6;color:#a42434;font-weight:600;margin-bottom:14px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);opacity:0;background:var(--ink);color:#fff;padding:13px 22px;border-radius:99px;font-size:14px;font-weight:600;z-index:99;transition:all .35s;box-shadow:0 14px 40px rgba(0,0,0,.3)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--mut);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:860px){.two{grid-template-columns:1fr}.hero{padding:32px 24px}.search{display:none}.nav .wrap{gap:8px}.me span.n{display:none}}
+
+/* IvoryBlock shared midnight-glass theme */
+:root{--bg:#050d0b;--paper:#0b1712;--ink:#e8f3ee;--mut:#85a094;--line:rgba(255,255,255,.10);--g:#3cf2a0;--g2:#18c982;--gl:rgba(60,242,160,.13);--o:#ffb547;--r:#ff4d5e;--sh:0 12px 32px rgba(0,0,0,.25)}
+body{background:radial-gradient(ellipse at 75% -15%,rgba(60,242,160,.09),transparent 42%),var(--bg);color:var(--ink)}
+.nav{background:rgba(5,13,11,.86);border-color:var(--line);box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.logo{font-family:"Segoe UI",system-ui,sans-serif;letter-spacing:.13em;font-size:19px;color:var(--ink)}
+.logo b{color:var(--g)}
+.search input,.btn,.me,.card,.panel,.modal,.demo,.scan,.res,.tbl-wrap,.tabs,.form input,.form select,.form textarea,.f input,.f select,.f textarea,.search input:focus{background:rgba(255,255,255,.045);color:var(--ink);border-color:var(--line)}
+.search input::placeholder,.form input::placeholder,.f input::placeholder,.form textarea::placeholder,.f textarea::placeholder{color:#71877b}
+.search input:focus,.form input:focus,.form textarea:focus,.form select:focus,.f input:focus,.f textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(60,242,160,.12)}
+.lnk{color:var(--mut)}.lnk:hover,.lnk.on{color:var(--g);background:rgba(60,242,160,.10)}
+.btn{border-radius:11px}.btn.pri{background:var(--g);color:#04110b;border-color:var(--g);font-weight:800}.btn.pri:hover{background:#6ff8b9}
+.btn.dng{color:#ff7180;border-color:rgba(255,77,94,.4)}
+.me{border-radius:12px}.role{background:rgba(60,242,160,.13);color:var(--g)}.role.admin{background:rgba(255,181,71,.14);color:var(--o)}
+.hero{background:linear-gradient(125deg,#0a2117 0%,#0b3b27 55%,#12613e 100%);border:1px solid rgba(60,242,160,.18);box-shadow:0 20px 60px rgba(0,0,0,.22)}
+.hero:after{opacity:.18}
+.shield{border-color:rgba(60,242,160,.25);color:#c8ffe3}
+.card,.panel,.demo,.scan,.res{border:1px solid var(--line);box-shadow:var(--sh);border-radius:16px}
+.card:hover,.panel:hover{border-color:rgba(60,242,160,.32)}
+.cat,.cats button,.tabs button,.tab{background:rgba(255,255,255,.045);border-color:var(--line);color:var(--mut)}
+.cat:hover,.cats button:hover,.tabs button:hover,.tabs button.on,.tab.on{background:rgba(60,242,160,.12);color:var(--g);border-color:rgba(60,242,160,.28)}
+.price{color:var(--g)}.meta,.small,.sub,.page-t p,.sec-t p{color:var(--mut)}
+.banner{background:rgba(60,242,160,.08);border-color:rgba(60,242,160,.2);color:var(--ink)}
+input,select,textarea{color:var(--ink)}
+select option{background:#0b1712;color:#e8f3ee}
+table th{background:rgba(255,255,255,.045);color:#a8c0b3}
+table td,table th{border-color:var(--line)}
+tr:hover td{background:rgba(255,255,255,.025)}
+.modal{background:#0b1712;box-shadow:0 25px 90px rgba(0,0,0,.55)}
+.toast{background:#10251a;color:var(--ink);border:1px solid var(--line)}
+.empty{color:var(--mut)}
+footer{color:var(--mut)}
+@media(max-width:720px){.nav .wrap{gap:8px}.logo{font-size:16px}.search{display:none}.navr{gap:3px}.hero{padding:30px 22px;border-radius:20px}}
+
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#/">
+      <svg viewBox="0 0 48 48" fill="none"><rect x="3" y="3" width="42" height="42" rx="13" fill="#1b8a5a"/><path d="M14 31c1.5-9 6-14 18-16-1 9-5 15-18 16z" fill="#fff"/><path d="M14 34c4-5 8-8 13-11" stroke="#1b8a5a" stroke-width="2" stroke-linecap="round"/></svg>
+      Green<b>Bazaar</b>
+    </a>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search listings…" autocomplete="off">
+    </div>
+    <nav class="navr" id="navr"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- HOME -->
+  <section class="view on" id="v-home">
+    <div class="hero">
+      <svg class="leaf a" viewBox="0 0 48 48" fill="#fff"><path d="M6 40C8 18 22 6 44 4c-1 22-12 36-38 36z"/></svg>
+      <svg class="leaf b" viewBox="0 0 48 48" fill="#fff"><path d="M6 40C8 18 22 6 44 4c-1 22-12 36-38 36z"/></svg>
+      <h1>Buy and sell with confidence. Wildlife crime stays out.</h1>
+      <p>Every listing is read by the IvoryBlock AI before it goes live. Suspicious ones are held for a human reviewer.</p>
+      <div class="shield"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Protected by IvoryBlock AI</div>
+      <div class="hstats"><div><b id="hs1">0</b><span>Live listings</span></div><div><b id="hs2">0</b><span>Categories</span></div><div><b>100%</b><span>Screened before publishing</span></div></div>
+    </div>
+    <div class="cats" id="cats"></div>
+    <div class="sec-t"><h2 id="gridTitle">Fresh listings</h2><span id="gridCount"></span></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- SELL -->
+  <section class="view" id="v-sell">
+    <div class="page-t"><h1>Seller studio</h1><p>Post a listing. The AI safety check runs the moment you press Publish.</p></div>
+    <div id="suspBanner"></div>
+    <div class="two">
+      <div class="panel">
+        <h3>New listing</h3>
+        <form class="form" id="sellForm" style="padding:0">
+          <label>Title<input class="f" id="sTitle" maxlength="120" placeholder="e.g. Handmade ceramic coffee mugs"></label>
+          <label>Description<textarea class="f" id="sDesc" maxlength="2000" placeholder="Condition, size, how you ship, how you accept payment…"></textarea></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <label>Price (₹)<input class="f" id="sPrice" type="number" min="0" step="1" placeholder="999"></label>
+            <label>Category<select class="f" id="sCat"></select></label>
+          </div>
+          <div class="err" id="sErr"></div>
+          <button class="btn pri" id="sBtn" type="submit">Publish listing</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>AI safety check</h3>
+        <div class="check" id="check"><div class="idle"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Your listing will be checked here before buyers can see it.</div></div></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px"><h3 style="margin:0">My listings</h3><span id="standing"></span></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Listing</th><th>Price</th><th>Status</th><th>Message</th><th></th></tr></thead><tbody id="myRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- ORDERS -->
+  <section class="view" id="v-orders">
+    <div class="page-t"><h1>My orders</h1><p>Demo purchases. No real payment is taken.</p></div>
+    <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Item</th><th>Seller</th><th>Price</th><th>Date</th></tr></thead><tbody id="ordRows"></tbody></table></div></div>
+  </section>
+
+  <!-- BUYER REPORTS -->
+  <section class="view" id="v-reports">
+    <div class="page-t"><h1>My reports</h1><p>Track the products you reported and read the admin's decision.</p></div>
+    <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Product</th><th>Your reason</th><th>Status</th><th>Admin response</th><th>Final action</th><th>Date</th></tr></thead><tbody id="reportRows"></tbody></table></div></div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>GreenBazaar is a demo marketplace built for a college AI project. All products are fictional and no real payments are made.</span><span>Screening by <b>IvoryBlock</b></span></div></footer>
+
+<!-- product modal -->
+<div class="ov" id="ovP"><div class="modal pm"><button class="x" data-close>×</button><div id="pBody"></div></div></div>
+<!-- auth modal -->
+<div class="ov" id="ovA"><div class="modal"><button class="x" data-close>×</button>
+  <div class="tabs"><button id="tLogin" class="on">Log in</button><button id="tReg">Sign up</button></div>
+  <form class="form" id="authForm">
+    <label>Username<input class="f" id="aUser" autocomplete="username" maxlength="20"></label>
+    <label>Password<input class="f" id="aPass" type="password" autocomplete="current-password"></label>
+    <div id="roleBox" style="display:none"><div class="small" style="margin-bottom:8px;font-weight:700">I want to…</div>
+      <div class="roles"><label><input type="radio" name="role" value="buyer" checked>Buy things</label><label><input type="radio" name="role" value="seller">Sell things</label></div></div>
+    <div class="err" id="aErr"></div>
+    <button class="btn pri" id="aBtn" type="submit">Log in</button>
+  </form>
+  <div class="demo"><b>Demo accounts</b> (click to fill)<div class="dl">
+    <button data-u="buyer1" data-p="buyer123">Buyer</button><button data-u="seller1" data-p="seller123">Seller</button>
+    <button data-u="rare_finds" data-p="seller123">Risky seller</button><button data-u="admin" data-p="admin123">Admin</button></div></div>
+</div></div>
+<!-- report modal -->
+<div class="ov" id="ovR"><div class="modal"><button class="x" data-close>×</button>
+  <form class="form" id="repForm"><h2 style="font-family:Georgia,serif">Report this listing</h2>
+    <div class="small" id="repFor"></div>
+    <label>What looks wrong?<select class="f" id="repReason"><option>Looks like wildlife trafficking</option><option>Sells protected animal parts</option><option>Asks for hidden or crypto payment</option><option>Something else</option></select></label>
+    <div class="err" id="repErr"></div>
+    <button class="btn pri" type="submit">Send report</button></form></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const inr=n=>'₹'+Number(n).toLocaleString('en-IN');
+const CATV={'Home & Kitchen':['🍳','#ffe9c7','#ffd08a'],'Fashion':['👗','#fbd8e4','#f4a9c4'],'Electronics':['🎧','#d6e6fb','#9cc3f2'],
+ 'Handicrafts':['🏺','#f6dcc4','#e6b48a'],'Antiques & Collectibles':['🕰️','#e8e0cf','#cdbf9f'],'Books & Stationery':['📚','#dcefd9','#a9d6a3'],
+ 'Toys & Kids':['🧸','#fff1b8','#ffd95e'],'Health & Beauty':['🧴','#e3e0fa','#bdb6f0'],'Other':['📦','#e6e6e0','#c9c9bd']};
+let ME=null, CATS=[], LIST=[], CAT='', Q='', posting=false;
+
+async function api(path, body){
+  const o=body!==undefined?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{};
+  const r=await fetch(path,o); let j={}; try{j=await r.json()}catch(e){}
+  if(!r.ok && !j.error) j.error='Something went wrong ('+r.status+').'; return j;
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3000)}
+const openM=id=>{$(id).classList.add('on')}, closeM=()=>$$('.ov').forEach(o=>o.classList.remove('on'));
+$$('[data-close]').forEach(b=>b.onclick=closeM); $$('.ov').forEach(o=>o.addEventListener('mousedown',e=>{if(e.target===o)closeM()}));
+addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+
+/* ---------- nav ---------- */
+function renderNav(){
+  const n=$('#navr'), r=(location.hash||'#/').slice(2);
+  let h='<a class="lnk'+(r===''?' on':'')+'" href="#/">Browse</a>';
+  if(!ME){ h+='<button class="lnk" id="nLogin">Log in</button><button class="btn pri sm" id="nSign">Sign up</button>'; }
+  else{
+    if(ME.role==='seller') h+='<a class="lnk'+(r==='sell'?' on':'')+'" href="#/sell">Sell</a>';
+    if(ME.role==='buyer'){ h+='<a class="lnk'+(r==='orders'?' on':'')+'" href="#/orders">My orders</a>'; h+='<a class="lnk'+(r==='reports'?' on':'')+'" href="#/reports">My reports</a>'; }
+    if(ME.role==='admin') h+='<a class="btn sm" href="/admin">Admin console →</a>';
+    h+='<div class="me"><span class="n">'+esc(ME.username)+'</span><span class="role '+ME.role+'">'+ME.role+'</span><button class="btn sm" id="nOut">Log out</button></div>';
+  }
+  n.innerHTML=h;
+  if(!ME){$('#nLogin').onclick=()=>openAuth('login');$('#nSign').onclick=()=>openAuth('reg')}
+  else $('#nOut').onclick=async()=>{await api('/api/logout',{});ME=null;location.hash='#/';renderNav();route();toast('You are logged out.')};
+}
+
+/* ---------- auth ---------- */
+let authMode='login';
+function openAuth(m){setAuth(m);$('#aErr').textContent='';openM('#ovA');setTimeout(()=>$('#aUser').focus(),120)}
+function setAuth(m){authMode=m;$('#tLogin').classList.toggle('on',m==='login');$('#tReg').classList.toggle('on',m==='reg');
+  $('#roleBox').style.display=m==='reg'?'block':'none';$('#aBtn').textContent=m==='reg'?'Create account':'Log in';
+  $('#aPass').autocomplete=m==='reg'?'new-password':'current-password'}
+$('#tLogin').onclick=()=>setAuth('login'); $('#tReg').onclick=()=>setAuth('reg');
+$$('.demo button').forEach(b=>b.onclick=()=>{setAuth('login');$('#aUser').value=b.dataset.u;$('#aPass').value=b.dataset.p});
+$('#authForm').onsubmit=async e=>{
+  e.preventDefault(); $('#aErr').textContent=''; $('#aBtn').disabled=true;
+  const body={username:$('#aUser').value.trim(),password:$('#aPass').value};
+  if(authMode==='reg') body.role=document.querySelector('input[name=role]:checked').value;
+  const r=await api(authMode==='reg'?'/api/register':'/api/login',body); $('#aBtn').disabled=false;
+  if(r.error){$('#aErr').textContent=r.error;return}
+  ME=r.user; closeM(); $('#aPass').value=''; renderNav();
+  toast('Welcome, '+ME.username+'!');
+  if(ME.role==='admin'){location.href='/admin';return}
+  location.hash = ME.role==='seller' ? '#/sell' : '#/'; route();
+};
+
+/* ---------- browse ---------- */
+function renderCats(){
+  $('#cats').innerHTML=['All'].concat(CATS).map(c=>'<button class="cat'+((c==='All'&&!CAT)||c===CAT?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>').join('');
+  $$('.cat').forEach(b=>b.onclick=()=>{CAT=b.dataset.c==='All'?'':b.dataset.c;renderCats();loadListings()});
+}
+async function loadListings(){
+  $('#grid').innerHTML=Array(8).fill('<div class="skel"></div>').join('');
+  const r=await fetch('/api/listings?q='+encodeURIComponent(Q)+'&category='+encodeURIComponent(CAT)); LIST=await r.json();
+  renderGrid();
+}
+function thumb(cat,size){const v=CATV[cat]||CATV.Other;return '<div class="thumb" style="background:linear-gradient(135deg,'+v[1]+','+v[2]+')"><span>'+v[0]+'</span></div>'}
+function renderGrid(){
+  $('#gridTitle').textContent=Q?'Results for “'+Q+'”':(CAT||'Fresh listings');
+  $('#gridCount').textContent=LIST.length+' listing'+(LIST.length===1?'':'s');
+  if(!Q&&!CAT)$('#hs1').textContent=LIST.length;
+  $('#grid').innerHTML=LIST.length?LIST.map((l,i)=>'<div class="card" style="animation-delay:'+Math.min(i,12)*50+'ms" data-id="'+l.id+'">'+thumb(l.category)+
+    '<div class="cb"><div class="ct">'+esc(l.category)+'</div><h3>'+esc(l.title)+'</h3><div class="row"><span class="price">'+inr(l.price)+'</span><span class="seller">by '+esc(l.seller)+'</span></div></div></div>').join('')
+    :'<div class="empty"><div style="font-size:44px">🔍</div>No listings found.</div>';
+  $$('.card').forEach(c=>c.onclick=()=>openProduct(+c.dataset.id));
+}
+let qT=null; $('#q').oninput=e=>{clearTimeout(qT);qT=setTimeout(()=>{Q=e.target.value.trim();if((location.hash||'#/')!=='#/')location.hash='#/';loadListings()},250)};
+
+function openProduct(id){
+  const l=LIST.find(x=>x.id===id); if(!l)return;
+  let acts='';
+  if(!ME) acts='<button class="btn pri" id="pLog">Log in to buy</button>';
+  else if(ME.role==='buyer') acts='<button class="btn pri" id="pBuy">Buy now · '+inr(l.price)+'</button><button class="btn dng" id="pRep">⚑ Report</button>';
+  else acts='<span class="small">Log in with a buyer account to purchase.</span>';
+  $('#pBody').innerHTML=thumb(l.category)+'<div class="body"><div class="small" style="letter-spacing:.1em;text-transform:uppercase">'+esc(l.category)+'</div><h2>'+esc(l.title)+'</h2><p>'+esc(l.description)+'</p>'+
+    '<div class="meta"><span class="price" style="font-size:26px">'+inr(l.price)+'</span><span class="small">Sold by <b>'+esc(l.seller)+'</b></span></div><div class="acts">'+acts+'</div></div>';
+  openM('#ovP');
+  if(!ME)$('#pLog').onclick=()=>{closeM();openAuth('login')};
+  if(ME&&ME.role==='buyer'){
+    $('#pBuy').onclick=async()=>{const r=await api('/api/buy',{listing_id:id});if(r.error){toast(r.error);return}closeM();toast('Order placed (demo). Thank you!')};
+    $('#pRep').onclick=()=>{closeM();$('#repFor').textContent='Listing: '+l.title;$('#repErr').textContent='';$('#repForm').dataset.id=id;openM('#ovR')};
+  }
+}
+$('#repForm').onsubmit=async e=>{e.preventDefault();const r=await api('/api/report',{listing_id:+e.target.dataset.id,reason:$('#repReason').value});
+  if(r.error){$('#repErr').textContent=r.error;return}closeM();toast('Thanks. An admin will review this listing.')};
+
+/* ---------- seller ---------- */
+const SVG={published:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',review:'<circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/>',blocked:'<path d="M7 7l10 10M17 7L7 17"/>'};
+function renderSell(){
+  $('#sCat').innerHTML=CATS.map(c=>'<option>'+esc(c)+'</option>').join('');
+  loadMine();
+}
+async function loadMine(){
+  const r=await api('/api/seller/listings'); if(r.error)return;
+  const lab={GOOD:'Good standing',WATCH:'Under watch · extra checks',HIGH:'High risk · strict review'}[r.standing];
+  $('#standing').innerHTML='<span class="standing '+r.standing+'"><i class="dotl"></i>'+lab+'</span>';
+  $('#suspBanner').innerHTML=r.active?'':'<div class="banner">Your seller account is suspended. You cannot post new listings. Please contact the admin.</div>';
+  $('#myRows').innerHTML=r.listings.length?r.listings.map((l,i)=>'<tr style="animation-delay:'+i*40+'ms"><td><b>'+esc(l.title)+'</b><div class="small">'+esc(l.category)+'</div></td><td>'+inr(l.price)+'</td><td><span class="tg '+l.status+'">'+l.status.toUpperCase()+'</span></td><td class="small" style="max-width:280px">'+esc(l.message||'')+'</td><td>'+(l.status==='published'||l.status==='review'?'<button class="btn sm" data-rm="'+l.id+'">Remove</button>':'')+'</td></tr>').join(''):'<tr><td colspan="5" class="small">You have not posted anything yet.</td></tr>';
+  $$('[data-rm]').forEach(b=>b.onclick=async()=>{await api('/api/seller/remove',{id:+b.dataset.rm});loadMine();toast('Listing removed.')});
+}
+async function runCheck(body){
+  const box=$('#check'), steps=['Reading the title and description','Looking for protected-wildlife terms','Checking payment and shipping wording','Comparing with your account history'];
+  box.innerHTML='<div class="scan"></div><ul class="steps">'+steps.map(s=>'<li>'+s+'</li>').join('')+'</ul>';
+  const lis=$$('#check .steps li'); const req=api('/api/seller/post',body);
+  for(const l of lis){l.className='act';await sleep(430);l.className='ok'}
+  return req;
+}
+$('#sellForm').onsubmit=async e=>{
+  e.preventDefault(); if(posting)return; $('#sErr').textContent='';
+  const body={title:$('#sTitle').value.trim(),description:$('#sDesc').value.trim(),price:$('#sPrice').value,category:$('#sCat').value};
+  posting=true; $('#sBtn').disabled=true;
+  const r=await runCheck(body); posting=false; $('#sBtn').disabled=false;
+  if(r.error){$('#check').innerHTML='<div class="idle"><div style="color:var(--r);font-weight:700">'+esc(r.error)+'</div></div>';$('#sErr').textContent=r.error;return}
+  const T={published:'Published!',review:'Held for review',blocked:'Not published'}[r.status];
+  $('#check').innerHTML='<div class="res '+r.status+'"><div class="ic"><svg viewBox="0 0 24 24">'+SVG[r.status]+'</svg></div><h4>'+T+'</h4><p>'+esc(r.message)+'</p></div>';
+  if(r.status==='published'){$('#sellForm').reset();$('#sCat').selectedIndex=0}
+  loadMine();
+};
+
+/* ---------- orders ---------- */
+async function renderOrders(){
+  const r=await api('/api/orders'); if(r.error)return;
+  $('#ordRows').innerHTML=r.length?r.map((o,i)=>'<tr style="animation-delay:'+i*40+'ms"><td>#'+o.id+'</td><td><b>'+esc(o.title)+'</b></td><td>'+esc(o.seller)+'</td><td>'+inr(o.price)+'</td><td class="small">'+esc(o.created)+'</td></tr>').join(''):'<tr><td colspan="5" class="small">No orders yet. Browse the shop and press "Buy now".</td></tr>';
+}
+
+async function renderBuyerReports(){
+  const rows=await api('/api/buyer/reports'); if(rows.error)return;
+  $('#reportRows').innerHTML=rows.length?rows.map(r=>{
+    const status=r.status==='open'?'Under review':r.status==='upheld'?'Resolved · action taken':'Resolved · listing retained';
+    return '<tr><td><b>'+esc(r.title)+'</b><div class="small">Listing #'+r.listing_id+'</div></td><td>'+esc(r.reason)+'</td><td><span class="tg '+(r.status==='open'?'review':r.status==='upheld'?'rejected':'published')+'">'+status+'</span></td><td style="min-width:220px">'+esc(r.admin_response||'Awaiting admin response')+'</td><td>'+esc(r.action_taken||'Pending review')+'</td><td class="small">'+esc(r.created)+'</td></tr>';
+  }).join(''):'<tr><td colspan="6" class="small">You have not reported any products yet.</td></tr>';
+}
+
+/* ---------- router ---------- */
+function route(){
+  const r=(location.hash||'#/').slice(2); let v='home';
+  if(r==='sell'){ if(!ME){openAuth('login');v='home'} else if(ME.role!=='seller'){toast('Only seller accounts can post listings.');v='home'} else v='sell'; }
+  if(r==='orders'){ if(!ME){openAuth('login');v='home'} else if(ME.role!=='buyer'){toast('Only buyer accounts have orders.');v='home'} else v='orders'; }
+  if(r==='reports'){ if(!ME){openAuth('login');v='home'} else if(ME.role!=='buyer'){toast('Only buyer accounts can view reports.');v='home'} else v='reports'; }
+  $$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v)); renderNav(); scrollTo(0,0);
+  if(v==='sell')renderSell(); if(v==='orders')renderOrders(); if(v==='reports')renderBuyerReports(); if(v==='home')loadListings();
+}
+addEventListener('hashchange',route);
+(async function init(){
+  const me=await api('/api/me'); ME=me.user; CATS=me.categories||[]; $('#hs2').textContent=CATS.length;
+  renderCats(); route();
+})();
+</script>
+</body>
+</html>
