@@ -1,13 +1,13 @@
-    out = []
-    for r in rows:
-        sr, lab = seller_risk(r["seller_id"])
-        out.append({"id": r["id"], "title": r["title"], "description": r["description"], "price": r["price"],
+out = []
+for r in rows:
+    sr, lab = seller_risk(r["seller_id"])
+    out.append({"id": r["id"], "title": r["title"], "description": r["description"], "price": r["price"],
                     "category": r["category"], "seller": r["seller"], "seller_id": r["seller_id"],
                     "seller_risk": sr, "seller_label": lab, "status": r["status"], "score": r["score"],
                     "level": r["level"], "nb": r["nb"], "lr": r["lr"], "evidence": r["evidence"],
                     "reason": r["reason"], "open_reports": r["open_reports"], "created": r["created"],
                     "admin_action": r["admin_action"]})
-    return out
+return out
 
 
 def sellers_overview():
